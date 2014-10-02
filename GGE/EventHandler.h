@@ -4,7 +4,7 @@
 # include <SFML\Window\Event.hpp>
 # include "Notification.h"
 
-# include "Game.h"
+// # include "Game.h"
 # include "IGameEventHandler.h"
 
 # include <map>
@@ -18,6 +18,8 @@
 
 namespace GGE
 {
+	class Game;
+
 	using CB = std::function<bool(const sf::Event & event, Game & game)>;		// CB can be a callback, a closure, etc ...
 	//typedef std::function< bool(const sf::Event & event, Game & game) >	CB;		// CB can be a callback, a closure, etc ...
 
@@ -42,7 +44,7 @@ namespace GGE
 				CB & cb = this->_eventTypeToCB_map.at(event.type); // can trigger std::out_of_range
 				return cb(event, this->_game);
 			}
-			catch (const std::out_of_range & e)
+			catch (const std::out_of_range &)
 			{
 				std::cerr << "GGE::GameEventHandler::Realize : Out-of-range exception triggered" << std::endl;
 			}
@@ -53,7 +55,7 @@ namespace GGE
 		Game & _game;	// binded
 		// NotificationHolder &	_notificationHolder;
 
-		std::map<const sf::Event::EventType &, CB>	_eventTypeToCB_map = 
+		std::map<const sf::Event::EventType, CB>	_eventTypeToCB_map/* = 
 		{
 			{
 				sf::Event::Closed,
@@ -63,7 +65,7 @@ namespace GGE
 				sf::Event::Resized,
 				[](const sf::Event & event, Game & game){ std::cout << "Resized : " << event.size.width << 'x' << event.size.height << std::endl; }
 			}
-		};
+		}*/;
 	};
 }
 

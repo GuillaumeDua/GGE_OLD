@@ -2,8 +2,10 @@
 # define __GEE_GAME__
 
 # include <SFML\Window\Window.hpp>
+# include <SFML\Graphics\RenderWindow.hpp>
 # include <iostream>
 # include <atomic>
+# include "IGameEventHandler.h"
 # include "EventHandler.h"
 
 // Window::SetFramerateLimit => vertical sync ?
@@ -147,10 +149,11 @@ namespace GGE
 				std::atomic<bool>	_IsRunning				= false;
 
 		// Rendering :
-				sf::RenderWindow 	_window;
+				sf::RenderWindow	_window;
 
 		// Event handling :
-				IGameEventHandler	* _EventHandler = new GameEventHandler(*this); // Binded by default with the current instance
+				using CB = std::function<bool(const sf::Event & event, Game & game)>;
+				GGE::IGameEventHandler<CB>	* _EventHandler;// = new GameEventHandler(*this); // Binded by default with the current instance
 	};
 }
 

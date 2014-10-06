@@ -32,7 +32,7 @@ namespace GGE
 		// Run
 		bool	Start(void)
 		{
-			assert(this->_EventHandler);
+			assert(this->_EventHandler != 0x0);
 
 			if (this->_IsRunning) return false;
 			this->_IsRunning = true;
@@ -54,13 +54,21 @@ namespace GGE
 		}
 
 		// Events handling
+		bool	SetGameEventsHandler(GGE::GameEventHandler & eh)
+		{
+			assert(&eh != 0x0);
+			if (this->_EventHandler != 0x0) return false;
+			this->_EventHandler = &eh;
+			return true;
+		}
 		bool	HandleEvent(const sf::Event & event)
 		{
-			this->_EventHandler->Realize(event);
-			return true;
+			/*this->_EventHandler->Realize(event);
+			return true;*/
 			switch (event.type)
 			{
 			case sf::Event::Closed:
+				std::cout << "Window closed" << std::endl;
 				this->_IsRunning = false; // Notifiy stop
 				return false;
 			case sf::Event::Resized:
@@ -73,10 +81,10 @@ namespace GGE
 				std::cout << "Focus gained" << std::endl;
 				break;
 			case sf::Event::KeyPressed:
-				std::cout << "KeyPress : " << event.key.code << std::endl;
+				std::cout << "KeyPress : " << event.key.code << " -> [" << static_cast<char>(event.key.code) << ']' << std::endl;
 				break;
 			case sf::Event::KeyReleased:
-				std::cout << "KeyReleased : " << event.key.code << std::endl;
+				std::cout << "KeyPress : " << event.key.code << " -> [" << static_cast<char>(event.key.code) << ']' << std::endl;
 				break;
 			case sf::Event::TextEntered:
 				std::cout << "Text entered : [" << (event.text.unicode < 128 ? static_cast<char>(event.text.unicode) : static_cast<unsigned int>(event.text.unicode)) << ']' << std::endl;
@@ -100,6 +108,7 @@ namespace GGE
 			default:
 				break;
 			}
+			return true;
 		}
 		void	ManageEvents(void)
 		{
@@ -108,7 +117,7 @@ namespace GGE
 			// todo : associate a callback to each of that event.type
 			while (this->_window.pollEvent(event))
 			{
-				std::cout << "New event : " << event.type << std::endl;
+				// std::cout << "New event : " << event.type << std::endl;
 				if (this->HandleEvent(event) == false) break;
 			}
 		}
@@ -118,6 +127,8 @@ namespace GGE
 		{
 			this->ManageEvents();
 			this->Render();
+
+			return true;
 		}
 		bool	Loop(void)
 		{

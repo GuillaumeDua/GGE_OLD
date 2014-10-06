@@ -30,7 +30,7 @@ namespace GGE
 		{}
 		GameEventHandler(const GameEventHandler &) = delete;
 		GameEventHandler(const GameEventHandler &&) = delete;
-		GameEventHandler()  = delete;
+		GameEventHandler() = delete;
 		~GameEventHandler(){}
 
 		CB &	Get(const sf::Event::EventType & eventType) // throw std::out_of_range

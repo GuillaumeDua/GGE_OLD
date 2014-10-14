@@ -83,7 +83,6 @@
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GGE.h" />
-    <ClInclude Include="IGameEventHandler.h" />
     <ClInclude Include="Notification.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

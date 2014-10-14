@@ -35,8 +35,5 @@
     <ClInclude Include="Notification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IGameEventHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

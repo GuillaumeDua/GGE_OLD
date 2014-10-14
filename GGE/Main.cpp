@@ -8,10 +8,10 @@ using namespace GGE;
 
 int	main(int ac, char *av[])
 {
-	GGE::Game				game;
-	GGE::GameEventHandler	eventsHandler(game);
+	using namespace GGE;
 
-	game.SetGameEventsHandler(eventsHandler);
+	Game<GameEventHandler> game;
+
 	game.Start();
 
 	system("pause");

@@ -5,8 +5,8 @@
 # include <SFML\Graphics\RenderWindow.hpp>
 # include <iostream>
 # include <atomic>
+# include <functional>
 # include "IGameEventHandler.h"
-# include "EventHandler.h"
 
 // Window::SetFramerateLimit => vertical sync ?
 // screenshots => sf::Image Scren = App.Capture()
@@ -54,7 +54,8 @@ namespace GGE
 		}
 
 		// Events handling
-		bool	SetGameEventsHandler(GGE::GameEventHandler & eh)
+		using CB = std::function<bool(const sf::Event & event, Game & game)>;
+		bool	SetGameEventsHandler(GGE::IGameEventHandler<CB> & eh)
 		{
 			assert(&eh != 0x0);
 			if (this->_EventHandler != 0x0) return false;
@@ -65,49 +66,49 @@ namespace GGE
 		{
 			/*this->_EventHandler->Realize(event);
 			return true;*/
-			switch (event.type)
-			{
-			case sf::Event::Closed:
-				std::cout << "Window closed" << std::endl;
-				this->_IsRunning = false; // Notifiy stop
-				return false;
-			case sf::Event::Resized:
-				std::cout << "Resized : " << event.size.width << 'x' << event.size.height << std::endl;
-				break;
-			case sf::Event::LostFocus:
-				std::cout << "Focus lost" << std::endl;
-				break;
-			case sf::Event::GainedFocus:
-				std::cout << "Focus gained" << std::endl;
-				break;
-			case sf::Event::KeyPressed:
-				std::cout << "KeyPress : " << event.key.code << " -> [" << static_cast<char>(event.key.code) << ']' << std::endl;
-				break;
-			case sf::Event::KeyReleased:
-				std::cout << "KeyPress : " << event.key.code << " -> [" << static_cast<char>(event.key.code) << ']' << std::endl;
-				break;
-			case sf::Event::TextEntered:
-				std::cout << "Text entered : [" << (event.text.unicode < 128 ? static_cast<char>(event.text.unicode) : static_cast<unsigned int>(event.text.unicode)) << ']' << std::endl;
-				break;
-			case sf::Event::MouseWheelMoved:
-				std::cout << "Wheel movement : " << event.mouseWheel.delta << " on : " << event.mouseWheel.x << 'x' << event.mouseWheel.y << std::endl;
-				break;
-			case sf::Event::MouseButtonPressed:
-				std::cout << "MouseButtonPressed : " << event.mouseButton.x << 'x' << event.mouseButton.y << std::endl;
-				break;
-			case sf::Event::MouseMoved:
-				std::cout << "MouveMoved : " << event.mouseMove.x << 'x' << event.mouseMove.y << std::endl;
-				break;
-			case sf::Event::MouseEntered:
-				std::cout << "MouseEntered" << std::endl;
-				break;
-			case sf::Event::MouseLeft:
-				std::cout << "MouseLeft" << std::endl;
-				break;
-				// [todo] : JoyStick
-			default:
-				break;
-			}
+			//switch (event.type)
+			//{
+			//case sf::Event::Closed:
+			//	std::cout << "Window closed" << std::endl;
+			//	this->_IsRunning = false; // Notifiy stop
+			//	return false;
+			//case sf::Event::Resized:
+			//	std::cout << "Resized : " << event.size.width << 'x' << event.size.height << std::endl;
+			//	break;
+			//case sf::Event::LostFocus:
+			//	std::cout << "Focus lost" << std::endl;
+			//	break;
+			//case sf::Event::GainedFocus:
+			//	std::cout << "Focus gained" << std::endl;
+			//	break;
+			//case sf::Event::KeyPressed:
+			//	std::cout << "KeyPress : " << event.key.code << " -> [" << static_cast<char>(event.key.code) << ']' << std::endl;
+			//	break;
+			//case sf::Event::KeyReleased:
+			//	std::cout << "KeyPress : " << event.key.code << " -> [" << static_cast<char>(event.key.code) << ']' << std::endl;
+			//	break;
+			//case sf::Event::TextEntered:
+			//	std::cout << "Text entered : [" << (event.text.unicode < 128 ? static_cast<char>(event.text.unicode) : static_cast<unsigned int>(event.text.unicode)) << ']' << std::endl;
+			//	break;
+			//case sf::Event::MouseWheelMoved:
+			//	std::cout << "Wheel movement : " << event.mouseWheel.delta << " on : " << event.mouseWheel.x << 'x' << event.mouseWheel.y << std::endl;
+			//	break;
+			//case sf::Event::MouseButtonPressed:
+			//	std::cout << "MouseButtonPressed : " << event.mouseButton.x << 'x' << event.mouseButton.y << std::endl;
+			//	break;
+			//case sf::Event::MouseMoved:
+			//	std::cout << "MouveMoved : " << event.mouseMove.x << 'x' << event.mouseMove.y << std::endl;
+			//	break;
+			//case sf::Event::MouseEntered:
+			//	std::cout << "MouseEntered" << std::endl;
+			//	break;
+			//case sf::Event::MouseLeft:
+			//	std::cout << "MouseLeft" << std::endl;
+			//	break;
+			//	// [todo] : JoyStick
+			//default:
+			//	break;
+			//}
 			return true;
 		}
 		void	ManageEvents(void)
@@ -163,7 +164,6 @@ namespace GGE
 				sf::RenderWindow	_window;
 
 		// Event handling :
-				using CB = std::function<bool(const sf::Event & event, Game & game)>;
 				GGE::IGameEventHandler<CB>	* _EventHandler;// = new GameEventHandler(*this); // Binded by default with the current instance
 	};
 }

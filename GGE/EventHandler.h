@@ -12,16 +12,25 @@
 # include <exception>
 # include <stdexcept>
 
+# include "Game.h"
+
+///////////////////////////////////////
+//
+// Useless : Can be replace by any :
+// using CB = std::function<bool(const sf::Event & event, Game & game)>;
+// std::map<const sf::Event::EventType, CB>
+//
+///////////////////////////////////////
+
+
+
 // encapsulate std::function into an object that handle task's priority ?
 // encapsulate std::function into an object that handle threads ?
 // Use std::bind + placeholder
 
 namespace GGE
 {
-	class Game;
-
 	using CB = std::function<bool(const sf::Event & event, Game & game)>;		// CB can be a callback, a closure, etc ...
-	//typedef std::function< bool(const sf::Event & event, Game & game) >	CB;		// CB can be a callback, a closure, etc ...
 
 	struct GameEventHandler : public IGameEventHandler<CB>
 	{
@@ -55,17 +64,8 @@ namespace GGE
 		Game & _game;	// binded
 		// NotificationHolder &	_notificationHolder;
 
-		std::map<const sf::Event::EventType, CB>	_eventTypeToCB_map/* = 
-		{
-			{
-				sf::Event::Closed,
-				[](const sf::Event & event, Game & game){ std::cout << "Windows close event called" << std::endl; game._window.close(); }
-			},
-			{
-				sf::Event::Resized,
-				[](const sf::Event & event, Game & game){ std::cout << "Resized : " << event.size.width << 'x' << event.size.height << std::endl; }
-			}
-		}*/;
+		// std::bind
+		static std::map<const sf::Event::EventType, CB>	_eventTypeToCB_map;
 	};
 }
 

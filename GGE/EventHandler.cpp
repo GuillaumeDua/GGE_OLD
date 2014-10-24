@@ -26,15 +26,15 @@ std::map<const sf::Event::EventType, GGE::GameEventHandler::CB>	GGE::GameEventHa
 	},
 	{
 		sf::Event::KeyPressed,
-		[&](const sf::Event & event, GGE::GameEventHandler::GameType & game) -> bool { std::cout << "KeyPress : " << event.key.code << " -> [" << static_cast<char>(event.key.code) << ']' << std::endl; return true; }
+		[&](const sf::Event & event, GGE::GameEventHandler::GameType & game) -> bool { std::cout << "KeyPress : " << event.key.code << std::endl; return true; }
 	},
 	{
 		sf::Event::KeyReleased,
-		[&](const sf::Event & event, GGE::GameEventHandler::GameType & game) -> bool { std::cout << "KeyPress : " << event.key.code << " -> [" << static_cast<char>(event.key.code) << ']' << std::endl; return true; }
+		[&](const sf::Event & event, GGE::GameEventHandler::GameType & game) -> bool { std::cout << "KeyReleased : " << event.key.code << std::endl; return true; }
 	},
 	{
 		sf::Event::TextEntered,
-		[&](const sf::Event & event, GGE::GameEventHandler::GameType & game) -> bool { std::cout << "Text entered : [" << (event.text.unicode < 128 ? static_cast<char>(event.text.unicode) : static_cast<unsigned int>(event.text.unicode)) << ']' << std::endl; return true; }
+		[&](const sf::Event & event, GGE::GameEventHandler::GameType & game) -> bool { std::cout << "Text entered : " << event.text.unicode << " [" << static_cast<char>(event.text.unicode) << ']' << std::endl; return true; }
 	},
 	{
 		sf::Event::MouseWheelMoved,
@@ -42,7 +42,7 @@ std::map<const sf::Event::EventType, GGE::GameEventHandler::CB>	GGE::GameEventHa
 	},
 	{
 		sf::Event::MouseButtonPressed,
-		[&](const sf::Event & event, GGE::GameEventHandler::GameType & game) -> bool { std::cout << "MouseButtonPressed : " << event.mouseButton.x << 'x' << event.mouseButton.y << std::endl; return true; }
+		[&](const sf::Event & event, GGE::GameEventHandler::GameType & game) -> bool { std::cout << "MouseButtonPressed : " << event.mouseButton.button << " : " << event.mouseButton.x << 'x' << event.mouseButton.y << std::endl; return true; }
 	},
 	{
 		sf::Event::MouseMoved,

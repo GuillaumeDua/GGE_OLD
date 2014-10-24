@@ -24,6 +24,11 @@
 
 namespace GGE
 {
+	/*
+	[Todo] : Keyboard event -> Do a stack of inputs
+	[Todo] : Mouse event
+	*/
+
 	struct GameEventHandler
 	{
 		using GameType	= Game < GameEventHandler > ;

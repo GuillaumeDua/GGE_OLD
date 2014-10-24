@@ -92,11 +92,11 @@ namespace GGE
 		using Action	= std::function<bool()>;
 		using ActionMap = std::map < State, Action > ;
 
+		Behave() = delete;
 		Behaviour(T * obj)
 			: _bindedWith(obj)
-		{
-			this->_currentState = GetDefaultState();
-		}
+			, this->_currentState(GetDefaultState())
+		{}
 
 		bool	Do(void)
 		{

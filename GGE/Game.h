@@ -7,6 +7,7 @@
 # include <atomic>
 # include <functional>
 # include <map>
+# include "Entity.h"
 
 // Window::SetFramerateLimit => vertical sync ?
 // screenshots => sf::Image Scren = App.Capture()
@@ -48,7 +49,6 @@ namespace GGE
 		// Rendering
 		void	Render(void)
 		{
-			this->_window.clear();
 			this->_window.display();
 		}
 
@@ -72,10 +72,26 @@ namespace GGE
 			}
 		}
 
+		// Entities managing
+		void	AddEntities(Entity * entity)
+		{
+			this->_entities.push_back(entity);
+		}
+		void	ManageEntities()
+		{
+			for (std::vector<Entity*>::iterator it = this->_entities.begin(); it != this->_entities.end(); ++it)
+			{
+				(*it)->Behave();
+				(*it)->Draw();
+			}
+		}
+
 		// Loop
 		bool	Update(void)
 		{
+			this->_window.clear();
 			this->ManageEvents();
+			this->ManageEntities();
 			this->Render();
 
 			return true;
@@ -111,6 +127,9 @@ namespace GGE
 
 		// Rendering :
 				sf::RenderWindow	_window;
+
+		// Entities :
+				std::vector<Entity*>	_entities;
 	};
 }
 

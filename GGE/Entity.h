@@ -81,66 +81,176 @@ namespace GGE
 	/*
 	Collisionable	-> pas collisionable
 	Drawable		-> pas affichable
+
+	=> Policy
+
 	*/
 
-	class Entity;
-
 	// Bind differents actions of a class of type 'T' to actions (callback)
-	template <class T> class Behaviour : public GCL::Bindable
+	template <class T> class Behaviour
 	{
-		using State		= std::size_t;
-		using Action	= std::function<bool()>;
-		using ActionMap = std::map < State, Action > ;
+	public :
+		typedef		typename	T::State mState;
+		using		Action		= std::function<bool(T&)>;
+		using		ActionMap	= std::map < mState, Action >;
 
-		Behave() = delete;
-		Behaviour(T * obj)
-			: _bindedWith(obj)
-			, this->_currentState(GetDefaultState())
+		//Behave() = delete;
+		Behaviour(T & obj)
+			: _entity(obj)
+			, _currentState(T::GetDefaultState())
 		{}
 
-		bool	Do(void)
+		bool						Do(void)
 		{
 			ActionMap::iterator it;
 			if ((it = _actions.find(_currentState)) == _actions.end())
 				throw std::exception("[Error] : Not mapped state");
-			return (*it)();
+			return (*it)(this->_entity);
 		}
-
-		void	AddAction(const State state, Action & action)
+		void						Reset(void)
+		{
+			this->_currentState = T::GetDefaultState();
+			this->_actions.clear();
+		}
+		
+		void						AddAction(const mState state, Action & action)
 		{
 			this->_actions[state] = action;
 		}
-		void	DeleteAction(const State state)
+		void						RemoveAction(const mState state)
 		{
 			ActionMap::iterator it;
 			if ((it = _actions.find(state)) != _actions.end())
 				_actions.erase(it);
 		}
+		void						SetActionsMap(const ActionMap & actions)
+		{
+			this->_actions = actions;
+		}
 
-		virtual inline void	GetDefaultState(void) = 0;				// Initiale state
-		inline void			SetState(const State state)
+		inline const mState			GetState(void) const
+		{
+			return this->_currentState;
+		}
+		inline void					SetState(const mState state)
 		{
 			this->_currentState = state;
 		}
 
 	protected:
-		State				_currentState;
-		std::vector<State>	_states;
-		ActionMap			_actions;
+		T &							_entity;
+		mState						_currentState;
+		ActionMap					_actions;
 	};
+
+
+	/*
+	
+	void	       		Moveable::MoveInDirection(const RatiolizedVector2D & v)
+	{
+	  const float s		= (this->_speed * this->_app->GetFrameTime());
+
+
+	  this->_directionX	= (v._x > 0 ? true : false);
+	  this->_x		+= v._x * s;
+	  this->_y		+= v._y * s;
+	}
+
+	void		       	Moveable::MoveInDirection(const Point<float> & p)
+	{
+	  const float s		= (this->_speed * this->_app->GetFrameTime());
+	  const float ratio	= RatiolizedVector2D::GetRatio(p._x, p._y);
+
+	  this->_directionX	= (p._x > this->_x ? true : false);
+	  this->_x		+= (p._x / ratio) * s;
+	  this->_y		+= (p._y / ratio) * s;
+	}
+
+
+	void   			Moveable::MoveTo(float dx, float dy)
+	{
+	  const float s		= (this->_speed * this->_app->GetFrameTime());
+	  const float ratio	= RatiolizedVector2D::GetRatio(dx, dy);
+
+	  if (dx < this->_x)
+		{
+		  this->_x += (dx / ratio) * s;
+		  if (this->_x < dx) this->_x = dx;
+		  this->_directionX	= false;
+		}
+	  else if (dx > this->_x)
+		{
+		  this->_x += (dx / ratio) * s;
+		  if (this->_x > dx) this->_x = dx;
+		  this->_directionX	= true;
+		}
+
+	  if (dy < this->_y)
+		{
+		  this->_y += (dy / ratio) * s;
+		  if (this->_y < dy) this->_y = dy;
+		}
+	  else if (dy > this->_y)
+		{
+		  this->_y += (dy / ratio) * s;
+		  if (this->_y > dy) this->_y = dy;
+		}
+	}
+
+	*/
 
 	class Entity
 	{
 	public:
+		enum State
+		{
+			READY,
+			IN_USE,
+			FROZEN,		// Skip all status check
+			GARBAGABLE,	// Can be recycle by a garbage collector
+		};
 
+		Entity(Sprite & sprite,
+			Point<size_t> pos)
+			: _needPositionRefresh(true)
+			, _sprite(sprite)
+			, _pos(pos)
+		{}
+
+		void	Behave()
+		{
+			this->_behaviour.Do();
+		}
 		void	Draw(sf::RenderWindow & window)
 		{
+			_sprite.setPosition(static_cast<float>(_pos._x), static_cast<float>(_pos._y));
 			window.draw(_sprite);
 		}
+		inline Behaviour<Entity> &	GetBehaviour(void)
+		{
+			return this->_behaviour;
+		}
+		void	MoveTo(const Direction & d)
+		{
+
+		}
+		void	MoveTo(const Point<size_t> & coord)
+		{
+
+		}
+		static const State	GetDefaultState(void)
+		{
+			return READY;
+		}
+		bool	_needPositionRefresh;		// Need position re-mapping ?
+
 	protected:
-		Point<std::size_t>	_pos;	// top-left point
-		Point<std::size_t>	_size;	// _pos + size => bot-right point
-		Sprite				_sprite;
+		Behaviour<Entity>	_behaviour = Behaviour<Entity>(*this);
+
+		Point<std::size_t>	_pos;			// top-left point
+		Point<std::size_t>	_size;			// _pos + size => bot-right point
+		Sprite &			_sprite;
+		size_t				_movementSpeed;
 	};
 }
 

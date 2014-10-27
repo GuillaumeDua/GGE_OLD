@@ -82,7 +82,7 @@ namespace GGE
 			for (std::vector<Entity*>::iterator it = this->_entities.begin(); it != this->_entities.end(); ++it)
 			{
 				(*it)->Behave();
-				(*it)->Draw();
+				(*it)->Draw(this->_window);
 			}
 		}
 

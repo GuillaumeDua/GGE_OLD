@@ -105,7 +105,8 @@ namespace GGE
 			ActionMap::iterator it;
 			if ((it = _actions.find(_currentState)) == _actions.end())
 				throw std::exception("[Error] : Not mapped state");
-			return (*it)(this->_entity);
+
+			return (it->second)(this->_entity);
 		}
 		void						Reset(void)
 		{

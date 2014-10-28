@@ -13,14 +13,27 @@ int	main(int ac, char *av[])
 	Game<GameEventHandler> game;
 
 	// [Current_work] : Test
-	Entity * e = new Entity(Sprite(), Point<size_t>(200, 200));
+	game.SetBackground("C:/DEV/PROJECTS/GGE/TEXTURES/BMP/bg_BlueWood.bmp");
+
+	/*
+	Sprite sprite;
+	sprite.setColor(sf::Color::Blue);
+
+	Entity * e = new Entity(sprite, Point<size_t>(200, 200));
 	Behaviour<Entity>::Action cb = [&](Entity & e) -> bool { e.MoveTo(Point<size_t>(400, 400)); return true; };
-	
 	e->GetBehaviour().AddAction(Entity::State::READY, cb);
-	game.AddEntities(e);
+
+	game.AddEntities(e);*/
 	// [Current_work] : End of test
 
-	game.Start();
+	try
+	{
+		game.Start();
+	}
+	catch (std::exception & e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
 
 	system("pause");
 	return 0;

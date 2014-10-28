@@ -211,12 +211,18 @@ namespace GGE
 			GARBAGABLE,	// Can be recycle by a garbage collector
 		};
 
-		Entity(Sprite & sprite,
+		Entity(const Sprite & sprite,
 			Point<size_t> pos)
 			: _needPositionRefresh(true)
 			, _sprite(sprite)
 			, _pos(pos)
 		{}
+		Entity() = delete;
+		~Entity(){}
+
+		// [Todo] : Recycle
+		// static GetRecycle
+		// override new Entity / new [] Entity
 
 		void	Behave()
 		{
@@ -230,6 +236,10 @@ namespace GGE
 		inline Behaviour<Entity> &	GetBehaviour(void)
 		{
 			return this->_behaviour;
+		}
+		inline void	SetTexture(const Texture & texture)
+		{
+			this->_sprite.setTexture(texture);
 		}
 		void	MoveTo(const Direction & d)
 		{
@@ -250,7 +260,7 @@ namespace GGE
 
 		Point<std::size_t>	_pos;			// top-left point
 		Point<std::size_t>	_size;			// _pos + size => bot-right point
-		Sprite &			_sprite;
+		Sprite				_sprite;
 		size_t				_movementSpeed;
 	};
 }

@@ -20,16 +20,29 @@ namespace GGE
 	public:
 		Game()
 			: _window(sf::VideoMode(800, 600, 32), "GEE Rendering")
-		{}
+		{
+			this->Initialize();
+		}
 		Game(const size_t TicksPerSec)
 			: _TicksPerSec(TicksPerSec)
 			, _window(sf::VideoMode(800, 600, 32), "GEE Rendering")
-		{}
+		{
+			this->Initialize();
+		}
 		Game(const Game &)	= delete;
 		Game(const Game &&) = delete;
 		~Game(){}
 
 //protected:
+
+		void	Initialize(void)
+		{
+			// _window.setFramerateLimit
+			// _window.getView
+			if (!(_window.isOpen()))
+				throw std::exception("[Error] : Rendering window is not open");
+			_backgroundSprite.setColor(sf::Color::Black);
+		}
 
 		// Run [-> I cld use my own Runnable class]
 		bool	Start(void)
@@ -47,9 +60,22 @@ namespace GGE
 		}
 
 		// Rendering
-		void	Render(void)
+		inline void	SetBackground(const Sprite & sprite)
 		{
-			this->_window.display();
+			this->_backgroundSprite = sprite;
+		}
+		inline void SetBackground(const std::string & texture_path)
+		{
+			if (!(_bufBatckgroundTexture.loadFromFile(texture_path)))
+			{
+				std::string what = "[Error] : GGE::Game::SetBackground : Cannot load texture from file : " + texture_path;
+				throw std::exception(what.c_str());
+			}
+			this->_backgroundSprite.setTexture(_bufBatckgroundTexture);
+		}
+		inline void SetBackground(const Texture & texture)
+		{
+			this->_backgroundSprite.setTexture(texture);
 		}
 
 		// Events handling
@@ -90,9 +116,10 @@ namespace GGE
 		bool	Update(void)
 		{
 			this->_window.clear();
+			this->_window.draw(this->_backgroundSprite);
 			this->ManageEvents();
 			this->ManageEntities();
-			this->Render();
+			this->_window.display();
 
 			return true;
 		}
@@ -127,6 +154,8 @@ namespace GGE
 
 		// Rendering :
 				sf::RenderWindow	_window;
+				Sprite				_backgroundSprite;
+				Texture				_bufBatckgroundTexture; // To use as buffer. [Todo]=[To_test] -> SetSmooth
 
 		// Entities :
 				std::vector<Entity*>	_entities;

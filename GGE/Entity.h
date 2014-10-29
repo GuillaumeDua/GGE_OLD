@@ -3,7 +3,7 @@
 
 # include <SFML\Graphics\RenderWindow.hpp>
 # include "Rendering.h"
-# include "ObjBinding.h"
+# include "GCL/ObjBinding.h"
 # include <functional>
 
 

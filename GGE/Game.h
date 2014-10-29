@@ -7,7 +7,9 @@
 # include <atomic>
 # include <functional>
 # include <map>
+
 # include "Entity.h"
+# include "GCL/Exception.h"
 
 // Window::SetFramerateLimit => vertical sync ?
 // screenshots => sf::Image Scren = App.Capture()
@@ -40,7 +42,7 @@ namespace GGE
 			// _window.setFramerateLimit
 			// _window.getView
 			if (!(_window.isOpen()))
-				throw std::exception("[Error] : Rendering window is not open");
+				throw GCL::Exception("[Error] : Rendering window is not open");
 			_backgroundSprite.setColor(sf::Color::Black);
 		}
 
@@ -67,10 +69,7 @@ namespace GGE
 		inline void SetBackground(const std::string & texture_path)
 		{
 			if (!(_bufBatckgroundTexture.loadFromFile(texture_path)))
-			{
-				std::string what = "[Error] : GGE::Game::SetBackground : Cannot load texture from file : " + texture_path;
-				throw std::exception(what.c_str());
-			}
+				throw GCL::Exception("[Error] : GGE::Game::SetBackground : Cannot load texture from file : " + texture_path);
 			this->_backgroundSprite.setTexture(_bufBatckgroundTexture);
 		}
 		inline void SetBackground(const Texture & texture)

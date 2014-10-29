@@ -13,7 +13,7 @@ int	main(int ac, char *av[])
 	Game<GameEventHandler> game;
 
 	// [Current_work] : Test
-	game.SetBackground("C:/DEV/PROJECTS/GGE/TEXTURES/BMP/bg_BlueWood.bmp");
+	
 
 	/*
 	Sprite sprite;
@@ -28,6 +28,7 @@ int	main(int ac, char *av[])
 
 	try
 	{
+		game.SetBackground("C:\\DEV\\PERSO\\GGE\\TEXTURES\\BMP\\bg_BlueWood.bmp");
 		game.Start();
 	}
 	catch (std::exception & e)

@@ -1,10 +1,33 @@
 #include "EventHandler.h"
+#include "Rendering.h"
 
 ///////////////////////////////////////
 //
 // Sample of implementation
 //
 ///////////////////////////////////////
+
+namespace TEST
+{
+	GGE::Sprite sprite;
+	GGE::Texture spriteTexture;
+	GGE::Image SpriteImage;
+	bool is_init = false;
+
+	static const GGE::Sprite & GetTestSprite(void)
+	{
+		if (!is_init)
+		{
+			SpriteImage.create(32, 32, sf::Color::Green);
+			spriteTexture.loadFromImage(SpriteImage);
+			sprite.setTexture(spriteTexture);
+			is_init = true;
+		}
+		return sprite;
+	}
+}
+
+using namespace GGE;
 
 std::map<const sf::Event::EventType, GGE::GameEventHandler::CB>	GGE::GameEventHandler::_eventTypeToCB_map =
 {
@@ -42,7 +65,14 @@ std::map<const sf::Event::EventType, GGE::GameEventHandler::CB>	GGE::GameEventHa
 	},
 	{
 		sf::Event::MouseButtonPressed,
-		[&](const sf::Event & event, GGE::GameEventHandler::GameType & game) -> bool { std::cout << "MouseButtonPressed : " << event.mouseButton.button << " : " << event.mouseButton.x << 'x' << event.mouseButton.y << std::endl; return true; }
+		[&](const sf::Event & event, GGE::GameEventHandler::GameType & game) -> bool
+																				{ 
+																					std::cout << "MouseButtonPressed : " << event.mouseButton.button << " : " << event.mouseButton.x << 'x' << event.mouseButton.y << std::endl;
+																					Entity * e = new Entity(TEST::GetTestSprite(), Point<size_t>(event.mouseButton.x, event.mouseButton.y));
+																					e->GetBehaviour().AddAction(Entity::State::READY, Behaviour<Entity>::Action([&](Entity & e) -> bool { e.MoveTo(Point<size_t>(400, 400)); return true; }));
+
+																					game.AddEntities(e);
+																					return true; }
 	},
 	{
 		sf::Event::MouseMoved,

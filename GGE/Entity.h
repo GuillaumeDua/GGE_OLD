@@ -30,6 +30,17 @@ namespace GGE
 			, _y(p._y)
 		{}
 
+
+		std::ostream & Dump(std::ostream & os) const
+		{
+			os << '(' << this->_x << ',' << this->_y << ')';
+			return os;
+		}
+		std::ostream & operator<<(std::ostream & os) const
+		{
+			return this->Dump();
+		}
+
 		inline bool		operator==(const Point & p) const
 		{
 			return (this->_x == p._x && this->_y == p._y);
@@ -224,6 +235,12 @@ namespace GGE
 		// static GetRecycle
 		// override new Entity / new [] Entity
 
+		std::ostream &	operator<<(std::ostream & os)
+		{
+			this->_pos.Dump(os);
+			return os;
+		}
+
 		void	Behave()
 		{
 			this->_behaviour.Do();
@@ -253,6 +270,11 @@ namespace GGE
 		{
 			return READY;
 		}
+		inline const Point<std::size_t>	& GetPosition() const
+		{
+			return this->_pos;
+		}
+
 		bool	_needPositionRefresh;		// Need position re-mapping ?
 
 	protected:

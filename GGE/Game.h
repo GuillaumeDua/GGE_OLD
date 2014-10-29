@@ -43,7 +43,6 @@ namespace GGE
 			// _window.getView
 			if (!(_window.isOpen()))
 				throw GCL::Exception("[Error] : Rendering window is not open");
-			_backgroundSprite.setColor(sf::Color::Black);
 		}
 
 		// Run [-> I cld use my own Runnable class]
@@ -141,20 +140,20 @@ namespace GGE
 			return true;
 		}
 
-		const float					FPS = 60.f;
-		const sf::Time 				TimePerFrame = sf::seconds(1.f / FPS);
+		const float						FPS = 60.f;
+		const sf::Time 					TimePerFrame = sf::seconds(1.f / FPS);
 
-		static	const size_t		DEFAULT_TICKS_PER_SEC	= 50;
-		static	const size_t		DEFAULT_FRAME_SKIP		= 10;
-				const size_t		_TicksPerSec			= DEFAULT_TICKS_PER_SEC;
-				const size_t		_TicksToSkip			= 1000 / _TicksPerSec;
-				const size_t		_MaxFameSkip			= DEFAULT_FRAME_SKIP;
-				std::atomic<bool>	_IsRunning				= false;
+		static	const size_t			DEFAULT_TICKS_PER_SEC	= 50;
+		static	const size_t			DEFAULT_FRAME_SKIP		= 10;
+				const size_t			_TicksPerSec			= DEFAULT_TICKS_PER_SEC;
+				const size_t			_TicksToSkip			= 1000 / _TicksPerSec;
+				const size_t			_MaxFameSkip			= DEFAULT_FRAME_SKIP;
+				std::atomic<bool>		_IsRunning				= false;
 
 		// Rendering :
-				sf::RenderWindow	_window;
-				Sprite				_backgroundSprite;
-				Texture				_bufBatckgroundTexture; // To use as buffer. [Todo]=[To_test] -> SetSmooth
+				sf::RenderWindow		_window;
+				Sprite					_backgroundSprite;
+				Texture					_bufBatckgroundTexture; // To use as buffer. [Todo]=[To_test] -> SetSmooth
 
 		// Entities :
 				std::vector<Entity*>	_entities;

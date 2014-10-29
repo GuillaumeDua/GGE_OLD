@@ -5,6 +5,7 @@
 
 namespace GGE
 {
+	typedef sf::Image	Image;
 	typedef sf::Texture Texture;
 	typedef sf::Sprite	Sprite;
 	typedef sf::Color	Color;

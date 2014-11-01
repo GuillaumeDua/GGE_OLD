@@ -97,13 +97,16 @@ namespace GGE
 
 	*/
 
+	// [Todo] : IBehaviour
+
 	// Bind differents actions of a class of type 'T' to actions (callback)
 	template <class T> class Behaviour
 	{
-	public :
+	public:
 		typedef		typename	T::State mState;
-		using		Action		= std::function<bool(T&)>;
-		using		ActionMap	= std::map < mState, Action >;
+		using		Action		= std::function < bool(T&) > ;
+		using		ActionMap	= std::multimap < mState, Action > ;
+		using		Element		= std::pair < mState, Action > ;
 
 		//Behave() = delete;
 		Behaviour(T & obj)
@@ -111,50 +114,77 @@ namespace GGE
 			, _currentState(T::GetDefaultState())
 		{}
 
-		bool						Do(void)
+		template <typename T_Operator> void		Iterate(const mState state, T_Operator & op)
 		{
-			ActionMap::iterator it;
+			std::pair<ActionMap::iterator, ActionMap::iterator>	range;
+			range = this->_actions.equal_range(_currentState);
+			for (ActionMap::iterator it = range.first; it != range.second; ++it)
+				if (!(op(it->second)))
+					std::cerr << "[Error] : Behaviour::Iterator : callback returned false" << std::endl;
+		}
+		bool									Do(void)
+		{
+			// Map style :
+			/*ActionMap::iterator it;
 			if ((it = _actions.find(_currentState)) == _actions.end())
 				throw std::exception("[Error] : Not mapped state");
 
-			return (it->second)(this->_entity);
+			return (it->second)(this->_entity);*/
+
+			// Multimap style :
+			std::pair<ActionMap::iterator, ActionMap::iterator>	range;
+			range = this->_actions.equal_range(_currentState);
+			for (ActionMap::iterator it = range.first; it != range.second; ++it)
+				if (!((it->second)(this->_entity)))
+					return false;
+			return true;
 		}
-		void						Reset(void)
+		void									Reset(void)
 		{
 			this->_currentState = T::GetDefaultState();
 			this->_actions.clear();
 		}
-		
-		void						AddAction(const mState state, Action & action)
+		void									operator-=(const mState state)
 		{
-			this->_actions[state] = action;
+			this->RemoveAction(state);
 		}
-		void						RemoveAction(const mState state)
+		void									operator+=(Element && p)
 		{
-			ActionMap::iterator it;
-			if ((it = _actions.find(state)) != _actions.end())
-				_actions.erase(it);
+			this->_actions.insert(std::move(p));
 		}
-		void						SetActionsMap(const ActionMap & actions)
+		void									AddAction(const mState state, Action & action)
+		{
+			this->_actions.insert(std::move(Element(state, action)));
+		}
+		void									RemoveAction(const mState state)
+		{
+				_actions.erase(state);
+		}
+		void									SetActionsMap(const ActionMap & actions)
 		{
 			this->_actions = actions;
 		}
-
-		inline const mState			GetState(void) const
+		inline const mState						GetState(void) const
 		{
 			return this->_currentState;
 		}
-		inline void					SetState(const mState state)
+		inline void								SetState(const mState state)
 		{
 			this->_currentState = state;
 		}
 
-	protected:
-		T &							_entity;
-		mState						_currentState;
-		ActionMap					_actions;
-	};
+		void									Dump(std::ostream & os = std::cout)
+		{
+			os << "Behavior binded to " << &_entity << " has actions mapped to its states : " << std::endl;
+			for (auto & e : this->_actions)
+				os << "\-[" << e.first << " : " << &(e.second) << ']' << std::endl;
+		}
 
+	protected:
+		T &										_entity;
+		mState									_currentState;
+		ActionMap								_actions;
+	};
 
 	/*
 	
@@ -221,6 +251,31 @@ namespace GGE
 			FROZEN,		// Skip all status check
 			GARBAGABLE,	// Can be recycle by a garbage collector
 		};
+		enum Type
+		{
+			MAP_ELEMENT
+			, EVENT_TRIGGER
+			, 
+		}	_type;
+		inline const Type	GetType(void) const
+		{
+			return this->_type;
+		}
+
+
+		// [Todo] : IBehaviour
+		using CollisionAction = std::function<void(Entity &, Entity &)>;
+		using CollisionActionsMap = std::map < Entity::Type, CollisionAction >;
+
+		CollisionActionsMap	_collisionsActionsMap;
+
+		void	OnCollision(Entity & with)
+		{
+			CollisionActionsMap::iterator it = this->_collisionsActionsMap.find(with.GetType());
+			if (it == this->_collisionsActionsMap.end())
+				return;
+			(it->second)(*this, with);
+		}
 
 		Entity(const Sprite & sprite,
 			Point<size_t> pos)

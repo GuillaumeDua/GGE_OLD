@@ -25,7 +25,7 @@ int	main(int ac, char *av[])
 	sprite.setTexture(spriteTexture);
 
 	Entity * e = new Entity(sprite, Point<size_t>(200, 200));
-	e->GetBehaviour().AddAction(Entity::State::READY, Behaviour<Entity>::Action([&](Entity & e) -> bool { e.MoveTo(Point<size_t>(400, 400)); return true; }));
+	e->GetBehavior().AddAction(Entity::State::READY, Behavior<Entity>::Action([&](Entity & e) -> bool { e.MoveTo(Point<size_t>(400, 400)); return true; }));
 	/*Behaviour<Entity>::Action cb = [&](Entity & e) -> bool { std::cout << "Entity : pos : " << e.GetPosition()._x << ',' << e.GetPosition()._y << std::endl; e.MoveTo(Point<size_t>(400, 400)); return true; };
 	e->GetBehaviour().AddAction(Entity::State::READY, cb);*/
 

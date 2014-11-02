@@ -99,18 +99,92 @@ namespace GGE
 
 	// [Todo] : IBehaviour
 
-	// Bind differents actions of a class of type 'T' to actions (callback)
-	template <class T> class Behaviour
+	template <class T_Entity, typename T_Key, typename T_CB_Signature> class IBehavior
 	{
 	public:
-		typedef		typename	T::State mState;
-		using		Action		= std::function < bool(T&) > ;
-		using		ActionMap	= std::multimap < mState, Action > ;
-		using		Element		= std::pair < mState, Action > ;
+		using		Action = T_CB_Signature;
+		using		ActionMap	= std::multimap < T_Key, Action >;
+		using		Element		= std::pair < T_Key, Action >; // value_type
+
+		IBehavior(T_Entity & obj)
+			: _entity(obj)
+		{}
+
+		template <typename T_Operator> void		Iterate(const T_Key key, T_Operator & op)
+		{
+			std::pair<ActionMap::iterator, ActionMap::iterator>	range;
+			range = this->_actions.equal_range(_currentState);
+			for (ActionMap::iterator it = range.first; it != range.second; ++it)
+				if (!(op(it->second)))
+					std::cerr << "[Error] : IBehavior::Iterate : callback returned false" << std::endl;
+		}
+		typename ActionMap::iterator &					At(const T_Key key)
+		{
+			return this->_actions.equal_range(key);
+		}
+		virtual bool							Do(void) = 0;
+		virtual void							Reset(void)
+		{
+			this->_actions.clear();
+		}
+		void									operator-=(const T_Key key)
+		{
+			this->RemoveAction(key);
+		}
+		void									operator+=(Element && p)
+		{
+			this->_actions.insert(std::move(p));
+		}
+		void									AddAction(const T_Key key, Action & action)
+		{
+			this->_actions.insert(std::move(Element(key, action)));
+		}
+		void									RemoveAction(const T_Key key)
+		{
+			_actions.erase(key);
+		}
+		void									SetActionsMap(const ActionMap & actions)
+		{
+			this->_actions = actions;
+		}
+
+		void									Dump(std::ostream & os = std::cout)
+		{
+			os << "Behavior binded to " << &_entity << " has actions mapped to its states : " << std::endl;
+			for (auto & e : this->_actions)
+				os << "\t-[" << e.first << " : " << &(e.second) << ']' << std::endl;
+		}
+
+	protected:
+		T_Entity &								_entity;
+		ActionMap								_actions;
+	};
+
+
+	template <typename T> struct BehaviorAdaptor
+	{
+		using key =  typename T::State;
+		using value = std::function<bool(T&)> ;
+
+		typedef IBehavior<T, key, value> BehaviorType;
+
+		static IBehavior<T, key, value> Make(void)
+		{
+			return IBehavior<T, key, value>();
+		}
+	};
+	
+	// Bind differents actions of a class of type 'T' to actions (callback)
+	template <class T> class Behavior : public BehaviorAdaptor<T>::BehaviorType
+	{
+	public:
+		using mState = typename BehaviorAdaptor<T>::key;
+		using Action = typename BehaviorAdaptor<T>::value;
+		using ActionMap = std::map < mState, Action > ;
 
 		//Behave() = delete;
-		Behaviour(T & obj)
-			: _entity(obj)
+		Behavior(T & obj)
+			: BehaviorAdaptor<T>::BehaviorType(obj)
 			, _currentState(T::GetDefaultState())
 		{}
 
@@ -144,26 +218,6 @@ namespace GGE
 			this->_currentState = T::GetDefaultState();
 			this->_actions.clear();
 		}
-		void									operator-=(const mState state)
-		{
-			this->RemoveAction(state);
-		}
-		void									operator+=(Element && p)
-		{
-			this->_actions.insert(std::move(p));
-		}
-		void									AddAction(const mState state, Action & action)
-		{
-			this->_actions.insert(std::move(Element(state, action)));
-		}
-		void									RemoveAction(const mState state)
-		{
-				_actions.erase(state);
-		}
-		void									SetActionsMap(const ActionMap & actions)
-		{
-			this->_actions = actions;
-		}
 		inline const mState						GetState(void) const
 		{
 			return this->_currentState;
@@ -172,18 +226,15 @@ namespace GGE
 		{
 			this->_currentState = state;
 		}
-
 		void									Dump(std::ostream & os = std::cout)
 		{
 			os << "Behavior binded to " << &_entity << " has actions mapped to its states : " << std::endl;
 			for (auto & e : this->_actions)
-				os << "\-[" << e.first << " : " << &(e.second) << ']' << std::endl;
+				os << "\t-[" << e.first << " : " << &(e.second) << ']' << std::endl;
 		}
 
 	protected:
-		T &										_entity;
 		mState									_currentState;
-		ActionMap								_actions;
 	};
 
 	/*
@@ -305,7 +356,7 @@ namespace GGE
 			_sprite.setPosition(static_cast<float>(_pos._x), static_cast<float>(_pos._y));
 			window.draw(_sprite);
 		}
-		inline Behaviour<Entity> &	GetBehaviour(void)
+		inline Behavior<Entity> &	GetBehavior(void)
 		{
 			return this->_behaviour;
 		}
@@ -333,7 +384,7 @@ namespace GGE
 		bool	_needPositionRefresh;		// Need position re-mapping ?
 
 	protected:
-		Behaviour<Entity>	_behaviour = Behaviour<Entity>(*this);
+		Behavior<Entity>	_behaviour = Behavior<Entity>(*this);
 
 		Point<std::size_t>	_pos;			// top-left point
 		Point<std::size_t>	_size;			// _pos + size => bot-right point

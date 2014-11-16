@@ -140,6 +140,7 @@ namespace GGE
 			return true;
 		}
 
+		// Ticks :
 		const float						FPS = 60.f;
 		const sf::Time 					TimePerFrame = sf::seconds(1.f / FPS);
 
@@ -151,7 +152,9 @@ namespace GGE
 				std::atomic<bool>		_IsRunning				= false;
 
 		// Rendering :
-				sf::RenderWindow		_window;
+				// [Todo] : Use GGE::Screen here
+
+				RenderWindow			_window;
 				Sprite					_backgroundSprite;
 				Texture					_bufBatckgroundTexture; // To use as buffer. [Todo]=[To_test] -> SetSmooth
 

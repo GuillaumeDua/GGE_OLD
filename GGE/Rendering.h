@@ -5,10 +5,12 @@
 
 namespace GGE
 {
-	typedef sf::Image	Image;
-	typedef sf::Texture Texture;
-	typedef sf::Sprite	Sprite;
-	typedef sf::Color	Color;
+	typedef sf::RenderWindow	RenderWindow;
+	typedef sf::Window			Window;
+	typedef sf::Image			Image;
+	typedef sf::Texture			Texture;
+	typedef sf::Sprite			Sprite;
+	typedef sf::Color			Color;
 };
 
 #endif // __RENDERING__

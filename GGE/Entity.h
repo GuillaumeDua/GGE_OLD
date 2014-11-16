@@ -7,12 +7,10 @@
 # include "behavior.h"
 # include "Geometry.h"
 
+# include "Serializable.h"
+
 using namespace GGE::Geometry;
-
-/*
-4,5 => 10,2
-
-*/
+using namespace GCL;
 
 namespace GGE
 {
@@ -79,7 +77,10 @@ namespace GGE
 
 	*/
 
-	class Entity
+	// [Todo] : Recycle
+	// static GetRecycle
+	// override new Entity / new [] Entity
+	class Entity : public Serializable
 	{
 	public:
 		enum State
@@ -94,20 +95,17 @@ namespace GGE
 			MAP_ELEMENT
 			, EVENT_TRIGGER
 			, 
-		}	_type;
-		inline const Type	GetType(void) const
+		}					_type;
+		inline const Type					GetType(void) const
 		{
 			return this->_type;
 		}
 
-
-		// [Todo] : IBehaviour
 		using CollisionAction = std::function<void(Entity &, Entity &)>;
-		using CollisionActionsMap = std::map < Entity::Type, CollisionAction >;
+		using CollisionActionsMap = std::map < Entity::Type, CollisionAction >; // [?] std::multimap [?]
 
-		CollisionActionsMap	_collisionsActionsMap;
-
-		void	OnCollision(Entity & with)
+		CollisionActionsMap					_collisionsActionsMap;
+		void								OnCollision(Entity & with)
 		{
 			CollisionActionsMap::iterator it = this->_collisionsActionsMap.find(with.GetType());
 			if (it == this->_collisionsActionsMap.end())
@@ -124,59 +122,66 @@ namespace GGE
 		Entity() = delete;
 		~Entity(){}
 
-		// [Todo] : Recycle
-		// static GetRecycle
-		// override new Entity / new [] Entity
+		//std::ostream &						operator<<(std::ostream & os)
+		//{
+		//	this->_pos.Dump(os);
+		//	return os;
+		//}
 
-		std::ostream &	operator<<(std::ostream & os)
-		{
-			this->_pos.Dump(os);
-			return os;
-		}
-
-		void	Behave()
+		void								Behave()
 		{
 			this->_behaviour.Do();
 		}
-		void	Draw(sf::RenderWindow & window)
+		void								Draw(sf::RenderWindow & window)
 		{
 			_sprite.setPosition(static_cast<float>(_pos._x), static_cast<float>(_pos._y));
 			window.draw(_sprite);
 		}
-		inline Behavior<Entity> &	GetBehavior(void)
+		inline Behavior<Entity> &			GetBehavior(void)
 		{
 			return this->_behaviour;
 		}
-		inline void	SetTexture(const Texture & texture)
+		inline void							SetTexture(const Texture & texture)
 		{
 			this->_sprite.setTexture(texture);
 		}
-		void	MoveTo(const Direction & d)
+		void								MoveTo(const Direction & d)
 		{
 
 		}
-		void	MoveTo(const Point<size_t> & coord)
+		void								MoveTo(const Point<size_t> & coord)
 		{
 
 		}
-		static const State	GetDefaultState(void)
+		static const State					GetDefaultState(void)
 		{
 			return READY;
 		}
-		inline const Point<std::size_t>	& GetPosition() const
+		inline const Point<std::size_t>	&	GetPosition() const
 		{
 			return this->_pos;
 		}
 
-		bool	_needPositionRefresh;		// Need position re-mapping ?
+		bool								_needPositionRefresh;		// Need position re-mapping ?
 
 	protected:
-		Behavior<Entity>	_behaviour = Behavior<Entity>(*this);
+		Behavior<Entity>					_behaviour = Behavior<Entity>(*this);
 
-		Point<std::size_t>	_pos;			// top-left point
-		Point<std::size_t>	_size;			// _pos + size => bot-right point
-		Sprite				_sprite;
-		size_t				_movementSpeed;
+		Point<std::size_t>					_pos;			// top-left point
+		Point<std::size_t>					_size;			// _pos + size => bot-right point
+		Sprite								_sprite;
+		size_t								_movementSpeed;
+
+	private :
+		// [Todo] : Serializatio format
+		virtual bool						_Serialize(std::ostream & os)
+		{
+			return true;
+		}
+		virtual bool						_Unserialize(std::istream & is)
+		{
+			return true;
+		}
 	};
 }
 

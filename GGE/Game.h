@@ -35,9 +35,7 @@ namespace GGE
 		Game(const Game &&) = delete;
 		~Game(){}
 
-//protected:
-
-		void	Initialize(void)
+		void							Initialize(void)
 		{
 			// _window.setFramerateLimit
 			// _window.getView
@@ -46,7 +44,7 @@ namespace GGE
 		}
 
 		// Run [-> I cld use my own Runnable class]
-		bool	Start(void)
+		bool							Start(void)
 		{
 			if (this->_IsRunning) return false;
 			this->_IsRunning = true;
@@ -55,36 +53,36 @@ namespace GGE
 			this->_window.close();
 			return ret;
 		}
-		bool	Stop(void)
+		bool							Stop(void)
 		{
 			this->_IsRunning = false;
 		}
 
 		// Rendering
-		inline void	SetBackground(const Sprite & sprite)
+		inline void						SetBackground(const Sprite & sprite)
 		{
 			this->_backgroundSprite = sprite;
 		}
-		inline void SetBackground(const std::string & texture_path)
+		inline void						SetBackground(const std::string & texture_path)
 		{
 			if (!(_bufBatckgroundTexture.loadFromFile(texture_path)))
 				throw GCL::Exception("[Error] : GGE::Game::SetBackground : Cannot load texture from file : " + texture_path);
 			this->_backgroundSprite.setTexture(_bufBatckgroundTexture);
 		}
-		inline void SetBackground(const Texture & texture)
+		inline void						SetBackground(const Texture & texture)
 		{
 			this->_backgroundSprite.setTexture(texture);
 		}
 
 		// Events handling
-		bool	HandleEvent(const sf::Event & event)
+		bool							HandleEvent(const sf::Event & event)
 		{
 			EventHolder::MapType::const_iterator it = EventHolder::_eventTypeToCB_map.find(event.type);
 			if (it != EventHolder::_eventTypeToCB_map.end())
 				it->second(event, *this);
 			return true;
 		}
-		void	ManageEvents(void)
+		void							ManageEvents(void)
 		{
 			sf::Event event;
 
@@ -97,11 +95,11 @@ namespace GGE
 		}
 
 		// Entities managing
-		void	AddEntities(Entity * entity)
+		void							AddEntities(Entity * entity)
 		{
 			this->_entities.push_back(entity);
 		}
-		void	ManageEntities()
+		void							ManageEntities()
 		{
 			for (std::vector<Entity*>::iterator it = this->_entities.begin(); it != this->_entities.end(); ++it)
 			{
@@ -111,7 +109,7 @@ namespace GGE
 		}
 
 		// Loop
-		bool	Update(void)
+		bool							Update(void)
 		{
 			this->_window.clear();
 			this->_window.draw(this->_backgroundSprite);
@@ -121,7 +119,7 @@ namespace GGE
 
 			return true;
 		}
-		bool	Loop(void)
+		bool							Loop(void)
 		{
 			sf::Clock	clock;
 			sf::Time	diffTimeCt = sf::Time::Zero;

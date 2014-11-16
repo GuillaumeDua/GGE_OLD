@@ -49,7 +49,7 @@ namespace GGE
 			for (auto & e : this->_entities)
 				e->Draw(renderWindow);
 		}
-		void									BehaveEntity()
+		void									BehaveEntities()
 		{
 			for (auto & e : this->_entities)
 				e->Behave();
@@ -77,6 +77,10 @@ namespace GGE
 			this->Clean();
 		}
 
+		inline Screen *			GetActiveScreen(void)
+		{
+			return this->_activeScreen;
+		}
 		inline void				SetActiveScreen(const size_t index)
 		{
 			if (this->_activeScreen != 0x0)
@@ -89,7 +93,10 @@ namespace GGE
 			this->_screens = screens;
 		}
 
-		void					Behave()
+		void					BehaveEntities()
+		{
+			this->_activeScreen->BehaveEntities();
+		}
 		void					Display()
 		{
 			if (this->_activeScreen != 0x0)

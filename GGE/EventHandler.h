@@ -29,14 +29,33 @@ namespace GGE
 	[Todo] : Mouse event
 	*/
 
-	struct GameEventHandler
+	namespace EventHandler
 	{
-		using GameType	= Game < GameEventHandler > ;
-		using CB		= std::function<bool(const sf::Event & event, GameType & game)>;		// CB can be a callback, a closure, obj-binded function members with place-holders etc ...
-		using MapType	= std::map < const sf::Event::EventType, CB > ;
+		struct Engine
+		{
+			using GameType = Game < Engine >;
+			using CB		= std::function<bool(const sf::Event & event, GameType & game)>;	// CB can be a callback, a closure, obj-binded function members with place-holders etc ...
+			using MapType	= std::map < const sf::Event::EventType, CB > ;
 
-		static MapType	_eventTypeToCB_map;
-	};
+			static MapType	_eventTypeToCB_map;
+		};
+		struct Debugger
+		{
+			using GameType	= Game < Debugger >;
+			using CB		= std::function<bool(const sf::Event & event, GameType & game)>;
+			using MapType	= std::map < const sf::Event::EventType, CB >;
+
+			static MapType	_eventTypeToCB_map;
+		};
+		struct Editor
+		{
+			using GameType	= Game < Editor >;
+			using CB		= std::function<bool(const sf::Event & event, GameType & game)>;			
+			using MapType	= std::map < const sf::Event::EventType, CB >;
+
+			static MapType	_eventTypeToCB_map;
+		};
+	}
 }
 
 #endif // __GGE_EVENT_HANDLER__

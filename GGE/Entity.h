@@ -113,8 +113,7 @@ namespace GGE
 			(it->second)(*this, with);
 		}
 
-		Entity(const Sprite & sprite,
-			Point<size_t> pos)
+		Entity(const Sprite & sprite, Point<size_t> pos)
 			: _needPositionRefresh(true)
 			, _sprite(sprite)
 			, _pos(pos)

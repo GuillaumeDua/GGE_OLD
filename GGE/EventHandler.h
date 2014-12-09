@@ -4,12 +4,13 @@
 # include <SFML\Window\Event.hpp>
 # include "Notification.h"
 
+# include <iostream>
 # include <map>
 # include <functional>
 # include <exception>
 # include <stdexcept>
 
-# include "Game.h"
+// # include "Game.h"
 
 ///////////////////////////////////////
 //
@@ -28,30 +29,43 @@ namespace GGE
 	[Todo] : Keyboard event -> Do a stack of inputs
 	[Todo] : Mouse event
 	*/
+	class Game;
 
 	namespace EventHandler
 	{
-		struct Engine
+		struct Interface
 		{
-			using GameType = Game < Engine >;
-			using CB		= std::function<bool(const sf::Event & event, GameType & game)>;	// CB can be a callback, a closure, obj-binded function members with place-holders etc ...
-			using MapType	= std::map < const sf::Event::EventType, CB > ;
+			using GameType	= Game;
+			using CB		= std::function<bool(const sf::Event & event, GameType & game)>;			// CB can be a callback, a closure, obj-binded function members with place-holders etc ...
+			using MapType	= std::map < const sf::Event::EventType, CB >;
+
+			virtual MapType & GetTypeToCB_Map(void) = 0;
+		};
+
+		struct Engine : public Interface
+		{
+			MapType & GetTypeToCB_Map(void)
+			{
+				return _eventTypeToCB_map;
+			}
 
 			static MapType	_eventTypeToCB_map;
 		};
-		struct Debugger
+		struct Debugger : public Interface
 		{
-			using GameType	= Game < Debugger >;
-			using CB		= std::function<bool(const sf::Event & event, GameType & game)>;
-			using MapType	= std::map < const sf::Event::EventType, CB >;
+			MapType & GetTypeToCB_Map(void)
+			{
+				return _eventTypeToCB_map;
+			}
 
 			static MapType	_eventTypeToCB_map;
 		};
-		struct Editor
+		struct Editor : public Interface
 		{
-			using GameType	= Game < Editor >;
-			using CB		= std::function<bool(const sf::Event & event, GameType & game)>;			
-			using MapType	= std::map < const sf::Event::EventType, CB >;
+			MapType & GetTypeToCB_Map(void)
+			{
+				return _eventTypeToCB_map;
+			}
 
 			static MapType	_eventTypeToCB_map;
 		};

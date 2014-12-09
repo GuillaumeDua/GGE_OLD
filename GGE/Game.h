@@ -11,13 +11,19 @@
 # include "Entity.h"
 # include "GCL/Exception.h"
 
+# include "EventHandler.h"
+
 // Window::SetFramerateLimit => vertical sync ?
 // screenshots => sf::Image Scren = App.Capture()
 
+
 namespace GGE
 {
+	
+
 	struct EmptyEventHolder {}; // Error -> Invalid event-holder
-	template <typename EventHolder = EmptyEventHolder> class Game
+	// template <typename EventHolder = EmptyEventHolder> class Game
+	class Game
 	{
 	public:
 		Game()
@@ -75,10 +81,14 @@ namespace GGE
 		}
 
 		// Events handling
+		inline void						SetEventHandler(EventHandler::Interface & eventHandlerInterface)
+		{
+			this->_EventTypeToCB = eventHandlerInterface.GetTypeToCB_Map();
+		}
 		bool							HandleEvent(const sf::Event & event)
 		{
-			EventHolder::MapType::const_iterator it = EventHolder::_eventTypeToCB_map.find(event.type);
-			if (it != EventHolder::_eventTypeToCB_map.end())
+			EventHandler::Interface::MapType::const_iterator it = this->_EventTypeToCB.find(event.type);
+			if (it != this->_EventTypeToCB.end())
 				it->second(event, *this);
 			return true;
 		}
@@ -151,13 +161,15 @@ namespace GGE
 
 		// Rendering :
 				// [Todo] : Use GGE::Screen here
-
 				RenderWindow			_window;
 				Sprite					_backgroundSprite;
 				Texture					_bufBatckgroundTexture; // To use as buffer. [Todo]=[To_test] -> SetSmooth
 
 		// Entities :
 				std::vector<Entity*>	_entities;
+
+		// EventsHandler :
+				EventHandler::Interface::MapType &	_EventTypeToCB = EventHandler::Debugger().GetTypeToCB_Map();
 	};
 }
 

@@ -11,7 +11,8 @@ int	main(int ac, char *av[])
 {
 	using namespace GGE;
 
-	Game<EventHandler::Debugger> game;
+	// [Todo] : Tester le nouveau SetEventHandler [!]
+	Game game;
 
 	//// [Current_work] : Test
 	//Sprite sprite;

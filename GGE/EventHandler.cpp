@@ -1,6 +1,8 @@
 #include "EventHandler.h"
 #include "Rendering.h"
 
+# include "Game.h"
+
 ///////////////////////////////////////
 //
 // Sample of implementation

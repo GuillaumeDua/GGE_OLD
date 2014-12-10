@@ -15,7 +15,7 @@
 
 // Window::SetFramerateLimit => vertical sync ?
 // screenshots => sf::Image Scren = App.Capture()
-
+// [Todo] : std::atomic<bool> to lock while switching eventhandler + thread-safe
 
 namespace GGE
 {
@@ -81,14 +81,20 @@ namespace GGE
 		}
 
 		// Events handling
-		inline void						SetEventHandler(EventHandler::Interface & eventHandlerInterface)
+		inline const EventHandler::MapType * GetEventHandler_map(void)
 		{
-			this->_EventTypeToCB = eventHandlerInterface.GetTypeToCB_Map();
+			return this->_EventTypeToCB;
+		}
+		template <class T_EventHandler>
+		inline void						SetEventHandler()
+		{
+			std::cout << "Switching event handler from [" << &(this->_EventTypeToCB) << "] to : [" << &(T_EventHandler::GetTypeToCB_Map()) << ']' << std::endl;
+			this->_EventTypeToCB = &(T_EventHandler::GetTypeToCB_Map());
 		}
 		bool							HandleEvent(const sf::Event & event)
 		{
-			EventHandler::Interface::MapType::const_iterator it = this->_EventTypeToCB.find(event.type);
-			if (it != this->_EventTypeToCB.end())
+			EventHandler::MapType::const_iterator it = this->_EventTypeToCB->find(event.type);
+			if (it != this->_EventTypeToCB->end())
 				it->second(event, *this);
 			return true;
 		}
@@ -169,7 +175,7 @@ namespace GGE
 				std::vector<Entity*>	_entities;
 
 		// EventsHandler :
-				EventHandler::Interface::MapType &	_EventTypeToCB = EventHandler::Debugger().GetTypeToCB_Map();
+				EventHandler::MapType *	_EventTypeToCB = &(EventHandler::Engine::GetTypeToCB_Map());
 	};
 }
 

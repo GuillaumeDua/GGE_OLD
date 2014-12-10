@@ -41,6 +41,9 @@ int	main(int ac, char *av[])
 		game.SetBackground(background_texture);
 		// game.SetBackground("C:\\DEV\\PROJECTS\\GGE\\TEXTURES\\PNG\\bg_Blue.png");
 
+		game.SetEventHandler<EventHandler::Editor>();
+		game.SetEventHandler<EventHandler::Engine>();
+
 		game.Start();
 	}
 	catch (std::exception & e)

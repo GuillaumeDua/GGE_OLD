@@ -33,37 +33,35 @@ namespace GGE
 
 	namespace EventHandler
 	{
-		struct Interface
-		{
-			using GameType	= Game;
-			using CB		= std::function<bool(const sf::Event & event, GameType & game)>;			// CB can be a callback, a closure, obj-binded function members with place-holders etc ...
-			using MapType	= std::map < const sf::Event::EventType, CB >;
+		using GameType = Game;
+		using CB = std::function<bool(const sf::Event & event, GameType & game)>;			// CB can be a callback, a closure, obj-binded function members with place-holders etc ...
+		using MapType = std::map < const sf::Event::EventType, CB >;
 
-			virtual MapType & GetTypeToCB_Map(void) = 0;
-		};
-
-		struct Engine : public Interface
+		struct Engine
 		{
-			MapType & GetTypeToCB_Map(void)
+			static MapType & GetTypeToCB_Map(void)
 			{
+				std::cout << "[+] Engine::GetTypeToCB_Map" << std::endl;
 				return _eventTypeToCB_map;
 			}
 
 			static MapType	_eventTypeToCB_map;
 		};
-		struct Debugger : public Interface
+		struct Debugger
 		{
-			MapType & GetTypeToCB_Map(void)
+			static MapType & GetTypeToCB_Map(void)
 			{
+				std::cout << "[+] Debugger::GetTypeToCB_Map" << std::endl;
 				return _eventTypeToCB_map;
 			}
 
 			static MapType	_eventTypeToCB_map;
 		};
-		struct Editor : public Interface
+		struct Editor
 		{
-			MapType & GetTypeToCB_Map(void)
+			static MapType & GetTypeToCB_Map(void)
 			{
+				std::cout << "[+] Editor::GetTypeToCB_Map" << std::endl;
 				return _eventTypeToCB_map;
 			}
 

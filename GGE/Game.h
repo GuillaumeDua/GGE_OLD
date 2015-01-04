@@ -19,7 +19,10 @@
 
 namespace GGE
 {
-	
+	struct ICollisionsEngine
+	{
+
+	};
 
 	struct EmptyEventHolder {}; // Error -> Invalid event-holder
 	// template <typename EventHolder = EmptyEventHolder> class Game
@@ -81,9 +84,9 @@ namespace GGE
 		}
 
 		// Events handling
-		inline const EventHandler::MapType * GetEventHandler_map(void)
+		inline const EventHandler::MapType & GetEventHandler_map(void)
 		{
-			return this->_EventTypeToCB;
+			return *(this->_EventTypeToCB);
 		}
 		template <class T_EventHandler>
 		inline void						SetEventHandler()
@@ -101,15 +104,9 @@ namespace GGE
 		void							ManageEvents(void)
 		{
 			sf::Event event;
-
-			// todo : associate a callback to each of that event.type
 			while (this->_window.pollEvent(event))
-			{
-				// std::cout << "New event : " << event.type << std::endl;
 				if (this->HandleEvent(event) == false) break;
-			}
 		}
-
 		// Entities managing
 		void							AddEntities(Entity * entity)
 		{
@@ -123,7 +120,6 @@ namespace GGE
 				(*it)->Draw(this->_window);
 			}
 		}
-
 		// Loop
 		bool							Update(void)
 		{
@@ -153,7 +149,6 @@ namespace GGE
 			}
 			return true;
 		}
-
 		// Ticks :
 		const float						FPS = 60.f;
 		const sf::Time 					TimePerFrame = sf::seconds(1.f / FPS);

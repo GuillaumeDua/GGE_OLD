@@ -31,7 +31,7 @@ int	main(int ac, char *av[])
 	try
 	{
 		Texture background_texture;
-		//std::cout << std::boolalpha << texture.loadFromFile("bg_Blue.png", sf::IntRect(0,0, 800, 600)) << std::endl;
+		std::cout << std::boolalpha << background_texture.loadFromFile("bg_Blue.png", sf::IntRect(0, 0, 800, 600)) << std::endl;
 
 		GGE::Image image;
 		image.create(800, 600, sf::Color::Black);
@@ -42,11 +42,11 @@ int	main(int ac, char *av[])
 		// game.SetBackground("C:\\DEV\\PROJECTS\\GGE\\TEXTURES\\PNG\\bg_Blue.png");
 
 		game.SetEventHandler<EventHandler::Editor>();
-		game.SetEventHandler<EventHandler::Engine>();
+		//game.SetEventHandler<EventHandler::Engine>();
 
 		game.Start();
 	}
-	catch (std::exception & e)
+	catch (const std::exception & e)
 	{
 		std::cerr << e.what() << std::endl;
 	}
